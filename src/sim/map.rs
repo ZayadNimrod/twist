@@ -28,11 +28,13 @@ pub struct Country {
     //TODO: bordering
 }
 
-fn in_region(countries_region:&Region, searching_for:Region)->bool{
-      match searching_for {
-        Region::Both(a, b) => in_region(countries_region,*a) || in_region(countries_region, *b),
+
+fn in_region(countries_region:&Region, searching_for:&Region)->bool{
+    //TODO: throw error if searching_for is a Both?
+      match countries_region {
+        Region::Both(a, b) => in_region(a, &searching_for) || in_region(b, &searching_for),
         s => {
-          if s == *countries_region{true}else{false}
+          if s == *searching_for{true}else{false}
         } ,
     }
 }
@@ -79,4 +81,7 @@ impl Country {
         }
     }
 
+    pub fn in_region(self, checking : &Region)-> bool {
+        in_region(&self.region,checking)
+    }
 }
