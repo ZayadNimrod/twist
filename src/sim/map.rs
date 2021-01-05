@@ -41,6 +41,7 @@ fn in_region(countries_region:&Region, searching_for:&Region)->bool{
 
 
 impl Country {
+    /// Returns the Superpower the country is aligned to. If if is uncontrolled, it returns a None.
     pub fn alignment(self) -> Option<Superpower> {
         let diff: i8 = self.us_influence as i8 - self.ussr_influence as i8;
         if diff.abs() < self.stability as i8{
@@ -53,8 +54,8 @@ impl Country {
             };
         }
     }
-
-    pub fn mod_influence(&mut self, change:i8, power: Superpower){
+    /// Modifies the countries influence from the target superpower by `change`. Returns the new influence level.
+    pub fn mod_influence(&mut self, change:i8, power: Superpower)->u8{
         match power {
             Superpower::USA => {
                 if change>=0 { self.us_influence += change as u8;}
@@ -66,6 +67,7 @@ impl Country {
                         self.us_influence -= mag;
                     }
                 }
+                return self.us_influence;
             }
             Superpower::USSR => {
                 if change>=0 { self.ussr_influence += change as u8;}
@@ -77,10 +79,12 @@ impl Country {
                         self.ussr_influence -= mag;
                     }
                 }
+                return self.ussr_influence;
             }
         }
     }
 
+    /// Checks that the country is in the specified Region. DO NOT PASS A BOTH()!
     pub fn in_region(self, checking : &Region)-> bool {
         in_region(&self.region,checking)
     }
