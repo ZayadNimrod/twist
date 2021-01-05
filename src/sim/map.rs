@@ -29,13 +29,11 @@ pub struct Country {
 }
 
 fn in_region(countries_region:&Region, searching_for:Region)->bool{
-    if *countries_region == searching_for {
-        return true
-    }
-
-    match searching_for {
+      match searching_for {
         Region::Both(a, b) => in_region(countries_region,*a) || in_region(countries_region, *b),
-        _ => false,
+        s => {
+          if s == *countries_region{true}else{false}
+        } ,
     }
 }
 
