@@ -1,3 +1,11 @@
+use std::collections::{HashSet};
+use std::rc::Rc;
+use std::rc::Weak;
+use std::ptr;
+use std::vec::Vec;
+use std::cell::RefCell;
+use std::borrow::BorrowMut;
+
 pub enum Superpower {
     USA,
     USSR,
@@ -18,6 +26,27 @@ pub enum Region {
     CentralAmerica,
 }
 
+fn in_region(countries_region: &Region, searching_for: &Region) -> bool {
+    //TODO: throw error if searching_for is a Both?
+    match countries_region {
+        Region::Both(a, b) => in_region(a, &searching_for) || in_region(b, &searching_for),
+        s => ptr::eq(s , searching_for),
+    }
+}
+
+pub trait HasBorders {//Can't use a hashset becuase ???
+    fn get_neighbors(&self) -> &Vec<Weak<Box<dyn HasBorders>>>;
+
+    fn add_border(&mut self, new_neighbor: Weak<Box< dyn HasBorders >>) ;
+
+    fn neighbors_with(&self, to_check: Box<dyn HasBorders>) -> bool {
+        self.get_neighbors().iter().any(|x| match x.upgrade() {
+            None => false,
+            Some(s) => ptr::eq(&(*s) ,&to_check),
+        })
+    }
+
+}
 pub struct Country {
     name: &'static str,
     stability: u8,
@@ -25,23 +54,8 @@ pub struct Country {
     battleground: bool,
     us_influence: u8,
     ussr_influence: u8,
-    //TODO: bordering
+    bordering: RefCell<Box<Vec<Weak<Box<dyn HasBorders>>>>>,
 }
-
-fn in_region(countries_region: &Region, searching_for: &Region) -> bool {
-    //TODO: throw error if searching_for is a Both?
-    match countries_region {
-        Region::Both(a, b) => in_region(a, &searching_for) || in_region(b, &searching_for),
-        s => {
-            if *s == *searching_for {
-                true
-            } else {
-                false
-            }
-        }
-    }
-}
-
 impl Country {
     /// Returns the Superpower the country is aligned to. If if is uncontrolled, it returns a None.
     pub fn alignment(self) -> Option<Superpower> {
@@ -90,7 +104,71 @@ impl Country {
     }
 
     /// Checks that the country is in the specified Region. DO NOT PASS A BOTH()!
-    pub fn in_region(self, checking: &Region) -> bool {
+    pub fn in_region(&self, checking: &Region) -> bool {
         in_region(&self.region, checking)
     }
+
+
+}
+
+impl HasBorders for Country {
+    fn get_neighbors(&self) -> &Vec<Weak<Box<dyn HasBorders>>> {
+        return &**self.bordering.borrow();
+    }
+
+    fn add_border(&mut self, new_neighbor: Weak<Box< dyn HasBorders >>){
+
+        //match self.bordering.insert(Rc::downgrade(&new_neighbor))
+        //{
+        //    true => new_neighbor.add_border(self),
+        //    false => {}
+        //}
+        self.bordering.borrow_mut().push(new_neighbor);
+    }
+
+}
+
+
+struct SuperpowerState {
+    power:Superpower,
+    bordering: RefCell<Box<Vec<Weak<Box<dyn HasBorders>>>>>,
+
+}
+
+impl HasBorders for SuperpowerState {
+    fn get_neighbors(&self) -> &Vec<Weak<Box<dyn HasBorders>>> {
+        return &**self.bordering.borrow();
+    }
+
+    fn add_border(&mut self, new_neighbor: Weak<Box< dyn HasBorders >>){
+
+        //match self.bordering.insert(Rc::downgrade(&new_neighbor))
+        //{
+        //    true => new_neighbor.add_border(self),
+        //    false => {}
+        //}
+        self.bordering.borrow_mut().push(new_neighbor);
+    }
+
+}
+
+pub struct WorldMap {
+    countries: HashSet<Rc<Box<dyn HasBorders>>>,
+}
+
+
+pub fn create_map() ->Box<WorldMap>{
+    let mut map = WorldMap{
+        countries: HashSet::new()
+    };
+
+
+    return Box::new(map);
+}
+
+impl WorldMap {
+    pub fn create_border(a:Rc<Box<dyn HasBorders>>, b: Rc<Box<dyn HasBorders>> ){
+
+    }
+
 }
