@@ -17,9 +17,13 @@ pub mod game {
 
     use super::cards;
     use super::map;
-    use crate::sim::map::Superpower;
+    use crate::sim::map::{Superpower, WorldMap, State};
+    use crate::sim::cards::Card;
+    use std::rc::Weak;
 
+    //TODO: store effects in place (.ie Quagmire, Camp David...)
     pub struct Game {
+        world: Box<WorldMap>,
         deck: Vec<cards::Card>,
         discards: Vec<cards::Card>,
         phasing_player: Superpower,
@@ -32,6 +36,7 @@ pub mod game {
     pub fn set_up_game() -> Game {
         //set up the game board/deck
         let mut state: Game = Game {
+            world: map::create_map(),
             deck: Vec::new(),
             discards: Vec::new(),
             phasing_player: Superpower::USSR,
@@ -40,10 +45,47 @@ pub mod game {
             defcon: 5,
         };
         cards::populate_deck_early_war(&mut state.deck);
-
+        //TODO: initial influence setup
         return state;
     }
 
+    pub enum Action{
+        Operations(Card,Superpower,OpsAction),
+        SpaceRace(Card,Superpower),
+        Event(Card,Superpower),
+    }
+
+    pub enum OpsAction{
+        PlaceInfluence(Box<Vec<Weak<State>>>),
+        Coup(Weak<State>),
+        Realignment(Box<Vec<Weak<State>>>), //TODO: but realignments are resolved one by one!
+    }
+
+    pub enum ActionError{
+        NotImplemented,
+
+        TooManyActions,
+        TooLittleActions,
+
+        OddInfluenceInControlledCountry,
+        NoNeighboringInfluence,
+
+        CannotCoupInRegion,
+        CannotCoupRInCountry,
+
+        CannotRealignInRegion,
+        CannotRealignInCountry,
+
+
+
+        InvalidForEvent, //i.e Italy targeted by Brush War after NATO //TODO: this one needs work
+        EventBlocked, //i.e NATO before Marshall/Warsaw, Arab-Israeli War after Camp David
+
+
+        InsufficentSpaceRaceValue,
+        EnoughSpaceRaceAttempts,
+
+    }
     impl Game {
         pub fn next_turn(&mut self) {
             // at the end of a turn we must:
@@ -85,6 +127,32 @@ pub mod game {
                 todo!();
             }
             return self.defcon;
+        }
+
+
+
+
+        //TODO: contain next game state?
+        pub fn is_action_valid(proposition :&Action )->Result<(),ActionError>{
+            match proposition{
+                Action::Operations(card, power, action) => {
+                    //TODO: resolve event if oppo event
+                    match action {
+                        OpsAction::PlaceInfluence(_) => {Err(ActionError::NotImplemented)}
+                        OpsAction::Coup(_) => {Err(ActionError::NotImplemented)}
+                        OpsAction::Realignment(_) => {Err(ActionError::NotImplemented)}
+                    }
+                }
+                Action::SpaceRace(_, _) => {
+                    //check if this card can be spaceraced (i.e worth enough, also there havent been attepts (or 2 if at goal)
+                    todo!();
+                    Err(ActionError::NotImplemented)
+                }
+                Action::Event(_, _) => {
+                    todo!();
+                    Err(ActionError::NotImplemented)
+                }
+            }
         }
     }
 }
