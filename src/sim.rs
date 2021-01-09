@@ -17,7 +17,7 @@ pub mod game {
 
     use super::cards;
     use super::map;
-    use crate::sim::map::{Superpower, WorldMap, State};
+    use crate::sim::map::{Superpower, WorldMap, Country};
     use crate::sim::cards::Card;
     use std::rc::Weak;
 
@@ -56,9 +56,9 @@ pub mod game {
     }
 
     pub enum OpsAction{
-        PlaceInfluence(Box<Vec<Weak<State>>>),
-        Coup(Weak<State>),
-        Realignment(Box<Vec<Weak<State>>>), //TODO: but realignments are resolved one by one!
+        PlaceInfluence(Box<Vec<Weak<Country>>>),
+        Coup(Weak<Country>),
+        Realignment(Box<Vec<Weak<Country>>>), //TODO: but realignments are resolved one by one!
     }
 
     pub enum ActionError{
