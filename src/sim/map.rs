@@ -1,5 +1,3 @@
-use std::borrow::{Borrow};
-use std::collections::HashSet;
 use std::ptr;
 use std::rc::Rc;
 use std::rc::Weak;
@@ -47,7 +45,7 @@ pub trait HasBorders {
         })
     }
 
-    fn get_name() -> &'static str;
+    fn get_name(&self) -> & str;
 }
 
 pub struct Country {
@@ -145,6 +143,13 @@ impl HasBorders for SuperpowerState {
 
     fn add_border(&mut self, new_neighbor: Weak<dyn HasBorders>) {
         self.bordering.push(new_neighbor);
+    }
+
+    fn get_name(&self) -> &str {
+        match self.power {
+            Superpower::USA => {"USA"}
+            Superpower::USSR => {"USSR"}
+        }
     }
 }
 
