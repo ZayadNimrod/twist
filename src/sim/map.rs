@@ -159,7 +159,6 @@ pub struct WorldMap {
 
 pub fn create_map() -> Box<WorldMap> {
 
-    //TODO: add the countries to `map.countries`
     let mut map = WorldMap {
         countries: Vec::new(),
     };
@@ -302,10 +301,185 @@ pub fn create_map() -> Box<WorldMap> {
     create_border(&mut east_germany, &mut west_germany);
     create_border(&mut east_germany, &mut austria);
 
-    //TODO: rest of East Europe, Asia, ME, Africa
+    let mut poland = create_country("Poland",3,Region::Both(Box::new(Region::EastEurope),Box::new(Region::Europe)),true,&mut map);
+    create_border(&mut east_germany, &mut poland);
+    create_border(&mut poland, &mut ussr);
+
+    let mut czechoslovakia = create_country("Czechoslovakia",3,Region::Both(Box::new(Region::EastEurope),Box::new(Region::Europe)), false, &mut map);
+    create_border(&mut czechoslovakia,&mut poland);
+    create_border(&mut czechoslovakia, &mut east_germany);
+
+    let mut hungary = create_country("Hungary",3,Region::Both(Box::new(Region::EastEurope),Box::new(Region::Europe)), false, &mut map);
+    create_border(&mut czechoslovakia,&mut hungary);
+    create_border(&mut austria, &mut hungary);
+
+    let mut yugoslavia = create_country("Yugoslavia", 3, Region::Both(Box::new(Region::EastEurope), Box::new(Region::Europe)), false, &mut map);
+    create_border(&mut yugoslavia, &mut hungary);
+    create_border(&mut yugoslavia, &mut italy);
+
+    let mut romania = create_country("Romania",3,Region::Both(Box::new(Region::EastEurope),Box::new(Region::Europe)), false, &mut map);
+    create_border(&mut romania,&mut hungary);
+    create_border(&mut romania, &mut greece);
+    create_border(&mut romania, &mut turkey);
+    create_border(&mut romania, &mut ussr);
+
+    let mut bulgaria = create_country("Bulgaria",3,Region::Both(Box::new(Region::EastEurope),Box::new(Region::Europe)), false, &mut map);
+    create_border(&mut bulgaria, &mut greece);
+    create_border(&mut bulgaria, &mut turkey);
+
+    //Africa
+
+    let mut morocco = create_country("Morocco", 3,Region::Africa, false,&mut map );
+    create_border(&mut morocco, &mut spain);
+
+    let mut w_africa = create_country("West African States", 2,Region::Africa, false, &mut map);
+    create_border(&mut w_africa,&mut morocco);
+
+    let mut ivory_coast = create_country("Ivory Coast", 2,Region::Africa, false, &mut map);
+    create_border(&mut w_africa,&mut ivory_coast);
+
+    let mut algeria = create_country("Algeria", 2,Region::Africa,true, &mut map );
+    create_border(&mut morocco, &mut algeria);
+    create_border(&mut france, &mut algeria);
+
+    let mut saharan_states = create_country("Saharan States",1,Region::Africa,false,&mut map);
+    create_border(&mut algeria, &mut saharan_states);
+
+    let mut nigeria = create_country("Nigeria",1, Region::Africa, true, &mut map);
+    create_border(&mut saharan_states, &mut nigeria);
+    create_border(&mut ivory_coast, &mut nigeria);
+
+    let mut cameroon = create_country("Cameroon",1, Region::Africa, false, &mut map);
+    create_border(&mut nigeria, &mut cameroon);
+
+    let mut tunisia = create_country("Tunisia", 2, Region::Africa, false, &mut map);
+    create_border(&mut tunisia, &mut algeria);
+
+    let mut zaire = create_country("Zaire",1,Region::Africa, true, &mut map);
+    create_border(&mut zaire, &mut cameroon);
+
+    let mut angola = create_country("Angola",1, Region::Africa, true, &mut map);
+    create_border(&mut zaire, &mut angola);
+
+    let mut south_africa = create_country("South Africa",3, Region::Africa, true, &mut map);
+    create_border(&mut south_africa, &mut angola);
+
+    let mut botswana = create_country("Botswana",2, Region::Africa, false, &mut map);
+    create_border(&mut botswana, &mut angola);
+    create_border(&mut botswana, &mut south_africa);
+
+    let mut zimbabwe = create_country("Zimbabwe",1,Region::Africa,false, &mut map);
+    create_border(&mut zaire, &mut zimbabwe);
+    create_border(&mut botswana, &mut zimbabwe);
+
+    let mut s_e_africa = create_country("South East African States",1,Region::Africa,false, &mut map);
+    create_border(&mut s_e_africa, &mut zimbabwe);
+
+    let mut kenya = create_country("Kenya",2,Region::Africa,false, &mut map);
+    create_border(&mut s_e_africa, &mut kenya);
+
+    let mut somalia = create_country("Somalia",2,Region::Africa,false, &mut map);
+    create_border(&mut somalia, &mut kenya);
+
+    let mut ethiopia = create_country("Ethiopia",1,Region::Africa,false, &mut map);
+    create_border(&mut somalia, &mut ethiopia);
+
+    let mut sudan = create_country("Sudan",1,Region::Africa,false, &mut map);
+    create_border(&mut sudan, &mut ethiopia);
+
+    //Middle East
+    let mut libya = create_country("Libya",2,Region::MiddleEast,true,&mut map);
+    create_border(&mut libya, &mut tunisia);
+
+    let mut egypt = create_country("Egypt",2,Region::MiddleEast,true,&mut map);
+    create_border(&mut libya, &mut egypt);
+    create_border(&mut sudan, &mut egypt);
+
+    let mut israel = create_country("Israel",4,Region::MiddleEast,true,&mut map);
+    create_border(&mut egypt, &mut israel);
+
+    let mut syria = create_country("Syria",2,Region::MiddleEast,false,&mut map);
+    create_border(&mut israel, &mut syria);
+    create_border(&mut turkey, &mut syria);
+
+    let mut lebanon = create_country("Lebanon",1,Region::MiddleEast,false,&mut map);
+    create_border(&mut syria, &mut lebanon);
+    create_border(&mut israel, &mut lebanon);
+
+    let mut jordan = create_country("Jordan",2,Region::MiddleEast,false,&mut map);
+    create_border(&mut israel, &mut jordan);
+    create_border(&mut lebanon, &mut jordan);
+
+    let mut saudi = create_country("Saudi Arabia",3,Region::MiddleEast,true,&mut map);
+    create_border(&mut jordan, &mut saudi);
+
+    let mut gulf_states = create_country("Gulf States",3,Region::MiddleEast,false,&mut map);
+    create_border(&mut saudi, &mut gulf_states);
+
+    let mut iraq = create_country("Iraq",3,Region::MiddleEast,true,&mut map);
+    create_border(&mut gulf_states, &mut iraq);
+    create_border(&mut saudi, &mut iraq);
+
+    let mut iran = create_country("Iran",2,Region::MiddleEast,true,&mut map);
+    create_border(&mut iraq, &mut iran);
+
+    //Asia
+    let mut afghanistan = create_country("Afghanistan",2, Region::Asia,false,&mut map);
+    create_border(&mut iran, &mut afghanistan);
+
+    let mut pakistan = create_country("Pakistan",2, Region::Asia,true,&mut map);
+    create_border(&mut iran, &mut pakistan);
+    create_border(&mut afghanistan, &mut pakistan);
+
+    let mut india = create_country("India", 3, Region::Asia,true,&mut map);
+    create_border(&mut pakistan, &mut india);
+
+    let mut n_korea = create_country("North Korea",3,Region::Asia, true,&mut map);
+    create_border(&mut ussr, &mut n_korea);
+
+    let mut s_korea = create_country("South Korea",3,Region::Asia, true,&mut map);
+    create_border(&mut s_korea, &mut n_korea);
+
+    let mut japan = create_country("Japan",4,Region::Asia, true,&mut map);
+    create_border(&mut s_korea, &mut japan);
+    create_border(&mut usa, &mut japan);
+
+    let mut taiwan = create_country("Taiwan",3,Region::Asia, false,&mut map);
+    create_border(&mut s_korea, &mut taiwan);
+    create_border(&mut taiwan, &mut japan);
+
+    let mut australia = create_country("Australia",4,Region::Asia, false,&mut map);
+
+    //SE Asia
+    let mut burma  = create_country("Burma", 2, Region::Both(Box::new(Region::SEAsia),Box::new(Region::Asia)),false ,&mut map);
+    create_border(&mut india, &mut burma);
+
+    let mut laos  = create_country("Laos/Cambodia", 1, Region::Both(Box::new(Region::SEAsia),Box::new(Region::Asia)),false ,&mut map);
+    create_border(&mut laos, &mut burma);
+
+    let mut vietnam  = create_country("Vietnam", 1, Region::Both(Box::new(Region::SEAsia),Box::new(Region::Asia)),false ,&mut map);
+    create_border(&mut laos, &mut vietnam);
+
+    let mut thailand  = create_country("Thailand", 2, Region::Both(Box::new(Region::SEAsia),Box::new(Region::Asia)),true ,&mut map);
+    create_border(&mut laos, &mut thailand);
+    create_border(&mut vietnam, &mut thailand);
+
+    let mut malaysia  = create_country("Malaysia", 2, Region::Both(Box::new(Region::SEAsia),Box::new(Region::Asia)),false ,&mut map);
+    create_border(&mut malaysia, &mut thailand);
+    create_border(&mut malaysia, &mut australia);
+
+    let mut indonesia  = create_country("Indonesia", 1, Region::Both(Box::new(Region::SEAsia),Box::new(Region::Asia)),false ,&mut map);
+    create_border(&mut malaysia, &mut indonesia);
+
+    let mut philippines  = create_country("Philippines", 2, Region::Both(Box::new(Region::SEAsia),Box::new(Region::Asia)),false ,&mut map);
+    create_border(&mut indonesia, &mut philippines);
+    create_border(&mut japan, &mut philippines);
+
+
     return Box::new(map);
 }
 //TODO: *should* name be 'static?
+//TODO: somehow make it so we dont have to pass map
 fn create_country( name: &'static str, stability:u8, region:Region, battleground:bool, map :&mut WorldMap) -> Rc<dyn HasBorders>{
     let c:Rc<dyn HasBorders> = Rc::new(Country{
         name:  name,
